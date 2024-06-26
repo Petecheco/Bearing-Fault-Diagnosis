@@ -27,7 +27,7 @@ class BaseDataset(Dataset):
         data = self.data[item]
         data = torch.tensor(data, dtype=torch.float32)
         label = self.label[item]
-        label = torch.tensor(label, dtype=torch.float32)
+        label = torch.tensor(label, dtype=torch.long)
         return data, label
 
     def __len__(self):
@@ -70,14 +70,20 @@ class BaseDataset(Dataset):
         return batches
 
     def Load_PU(self, file_path, file_name):
-        return NotImplementedError("Functions not yet implemented")
+        data = sio.loadmat(file_path)
+        file_name = file_name.replace(".mat", "")
+        data = data[file_name]
+        col_data = data[0][0][1][0][0][2]
+        batches = self.Data_Segmentation(col_data)
+        return batches
 
     def Data_Segmentation(self, col_data):
         batches = []
-        num_segments = ((
-                                    len(col_data) - self.data_length) // self.stride) if self.num_of_samples is not None else self.num_of_samples
-        assert (num_segments * self.data_length) < len(col_data), "数据长度不足以每个文件生成{}个样本".format(
-            self.num_of_samples)
+        col_data = col_data.squeeze(0) if col_data.ndim > 1 else col_data
+        num_segments = ((len(col_data) - self.data_length) // self.stride) if self.num_of_samples is None else self.num_of_samples
+        if self.num_of_samples is not None:
+            assert (num_segments * self.data_length) < len(col_data), "数据长度不足以每个文件生成{}个样本".format(
+                self.num_of_samples)
         for i in range(num_segments):
             segment = col_data[i * self.stride: (i * self.stride + self.data_length)]
             batches.append(segment)
