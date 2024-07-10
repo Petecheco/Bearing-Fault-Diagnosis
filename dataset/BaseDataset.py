@@ -79,8 +79,13 @@ class BaseDataset(Dataset):
 
     def Data_Segmentation(self, col_data):
         batches = []
-        col_data = col_data.squeeze(0) if col_data.ndim > 1 else col_data
-        num_segments = ((len(col_data) - self.data_length) // self.stride) if self.num_of_samples is None else self.num_of_samples
+        if col_data.ndim > 1:
+            if self.dataset_type == "CWRU":
+                col_data = col_data.squeeze(-1)
+            elif self.dataset_type == "hgd":
+                col_data = col_data.squeeze(0)
+        num_segments = ((
+                                    len(col_data) - self.data_length) // self.stride) if self.num_of_samples is None else self.num_of_samples
         if self.num_of_samples is not None:
             assert (num_segments * self.data_length) < len(col_data), "数据长度不足以每个文件生成{}个样本".format(
                 self.num_of_samples)
