@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from config.pooling_config import POOLING_DICT
 
+
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, pooling_stride=2, pooling="max"):
         super(ConvBlock, self).__init__()
