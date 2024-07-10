@@ -1,13 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-# 如果需要可以添加更多池化方式
-
-POOLING_DICT = {
-    "max": nn.MaxPool1d,
-    "average": nn.AvgPool1d
-}
+from config.pooling_config import POOLING_DICT
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0, pooling_stride=2, pooling="max"):
