@@ -53,6 +53,10 @@ def CalculateCrossEntropy(y_true, outputs):
     return F.cross_entropy(outputs, y_true).numpy()
 
 
+def CalculateParameters(model):
+    return sum(p.numel() for p in model.parameters())
+
+
 if __name__ == '__main__':
     outputs = torch.tensor([[0.1, 0.9],
                             [0.9, 0.1],
