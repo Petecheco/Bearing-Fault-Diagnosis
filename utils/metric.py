@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
 from collections import defaultdict
 
 def GetOutputs(model, dataloader, device="cpu"):
@@ -48,6 +48,11 @@ def CalculateF1(y_true, outputs):
     score = f1_score(y_true, predictions, average="macro")
     return score
 
+def CalculateConfusionMatrix(y_true, outputs):
+    predictions = OutputToPredictions(outputs)
+    matrix = confusion_matrix(y_true, predictions)
+    return matrix
+
 
 def CalculateCrossEntropy(y_true, outputs):
     return F.cross_entropy(outputs, y_true).numpy()
@@ -76,5 +81,5 @@ if __name__ == '__main__':
                             [0.9, 0.1],
                             [0.1, 0.9]])
     y_true = torch.tensor((1, 1, 1, 0, 1, 0, 1))
-    acc = CalculatePerClassAccuracy(y_true, outputs)
+    acc = CalculateConfusionMatrix(y_true, outputs)
     print(acc)
